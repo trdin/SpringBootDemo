@@ -1,8 +1,13 @@
+![Spring Boot Logo](https://miro.medium.com/v2/resize:fit:720/format:webp/1*-uckV8DOh3l0bCvqZ73zYg.png)
 # BlogAPI
 
 BlogAPI is a demo program developed using Spring Boot, its purpose is to study the framework and its connection to the database. It is a REST API that uses Java 19 and Spring Boot 3.0.2. Please note that Java 19 is not a Long-Term Support (LTS) version.
 
-![Spring Boot Logo](https://miro.medium.com/v2/resize:fit:720/format:webp/1*-uckV8DOh3l0bCvqZ73zYg.png)
+The application contains the basic of an API:
+- POST
+- GET
+- PUT
+- DELETE
 
 ## Requirements
 
