@@ -1,57 +1,58 @@
 package com.example.BlogAPI.dao;
 
 import com.example.BlogAPI.model.Person;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository("fakeDao")
+@Repository("postgres")
 public class PersonDataAccessService implements PersonDao {
-    private static List<Person> DB = new ArrayList<>();
+
+    private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public PersonDataAccessService(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public int insertPerson(UUID id, Person person) {
-        DB.add(new Person(id, person.getName()));
-        return 1;
+        final String sql = "INSERT INTO person (id, name) VALUES ( ?, ?);";
+
+        return jdbcTemplate.update(sql, id, person.getName());
+
     }
 
     @Override
     public List<Person> selectAllPeople() {
-        return DB;
-    }
-
-    @Override
-    public int insertPerson(Person person) {
-        return PersonDao.super.insertPerson(person);
-    }
-
-    @Override
-    public int deletePerson(UUID id) {
-        Optional<Person> personMaybe = selectPersonById(id);
-        if(personMaybe.isEmpty()){
-            return 0;
-        }
-        DB.remove(personMaybe.get());
-        return 1;
-    }
-
-    @Override
-    public int updatePerson(UUID id, Person personUpdate) {
-        return selectPersonById(id).map(person->  {
-            int indexOfPersonToUpdate = DB.indexOf(person);
-            if(indexOfPersonToUpdate >= 0){
-                DB.set(indexOfPersonToUpdate, new Person(id, personUpdate.getName()));
-                return 1;
-            }
-            return 0;
-        }).orElse(0);
+        final String sql = "SELECT id, name FROM person";
+        return jdbcTemplate.query(sql, (resultSet, i) -> new Person(UUID.fromString(resultSet.getString("id")), resultSet.getString("name")));
     }
 
     @Override
     public Optional<Person> selectPersonById(UUID id) {
-        return DB.stream().filter(person -> person.getId().equals(id)).findFirst();
+        final String sql = "SELECT id, name FROM person WHERE id=?";
+
+        Person person = jdbcTemplate.queryForObject(sql, new Object[]{id}, (resultSet, i) -> new Person(UUID.fromString(resultSet.getString("id")), resultSet.getString("name")));
+        return Optional.ofNullable(person);
+
     }
+
+    @Override
+    public int deletePerson(UUID id) {
+        final String sql = "DELETE FROM person WHERE id=?";
+        return jdbcTemplate.update(sql,id);
+    }
+
+    @Override
+    public int updatePerson(UUID id, Person person) {
+        final String sql = "UPDATE person SET name= ? WHERE id = ? ";
+        return jdbcTemplate.update(sql,person.getName(), id);
+    }
+
+
 }
