@@ -22,8 +22,9 @@ public class PersonController {
     }
 
     @PostMapping
-    public void addPerson(@Valid @NonNull @RequestBody Person person){
-        personService.addPerson(person);
+    public Person addPerson(@Valid @NonNull @RequestBody Person person){
+        System.out.println("POST "+ person.getName());
+        return personService.addPerson(person);
     }
 
     @GetMapping

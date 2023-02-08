@@ -6,10 +6,6 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 
-
-
-
-
 server:
   port: 3001
 

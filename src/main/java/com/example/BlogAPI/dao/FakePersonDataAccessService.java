@@ -23,10 +23,6 @@ public class FakePersonDataAccessService implements PersonDao {
         return DB;
     }
 
-    @Override
-    public int insertPerson(Person person) {
-        return PersonDao.super.insertPerson(person);
-    }
 
     @Override
     public int deletePerson(UUID id) {

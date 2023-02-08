@@ -10,9 +10,13 @@ import java.util.UUID;
 public interface PersonDao {
     int  insertPerson(UUID id, Person person);
 
-    default int insertPerson(Person person){
+    default Person insertPerson(Person person){
         UUID id = UUID.randomUUID();
-        return insertPerson(id, person);
+        if(insertPerson(id, person) == 1){
+            return new Person(id, person.getName());
+        }else{
+            return null;
+        }
     }
 
     List<Person> selectAllPeople();
